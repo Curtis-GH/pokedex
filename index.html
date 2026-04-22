@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex</title>
+    <link rel="icon" href="favicon.png"image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-area">
+                <div class="pokeball-logo"></div>
+                <h1>Pokédex</h1>
+            </div>
+            <div class="search-area">
+                <input type="text" id="searchInput" placeholder="Search Pokémon...">
+                <button id="searchBtn" disabled>Search</button>
+                <button id="clearBtn" class="clear-btn d-none">✕ Clear</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div id="searchError" class="search-error d-none">
+            <span class="search-error-icon">🔍</span>
+            <p id="searchErrorText"></p>
+        </div>
+
+        <div id="pokemonContainer" class="pokemon-grid"></div>
+
+        <div id="loadingSpinner" class="loading-spinner d-none">
+            <div class="spinner"></div>
+            <span>Loading Pokémon...</span>
+        </div>
+
+        <div class="load-more-area">
+            <button id="loadMoreBtn" class="load-more-btn">Load More Pokémon</button>
+        </div>
+    </main>
+
+    <div id="overlay" class="overlay d-none">
+        <button id="prevBtn" class="nav-arrow nav-arrow-left">◀</button>
+        <button id="nextBtn" class="nav-arrow nav-arrow-right">▶</button>
+
+        <div class="overlay-card" onclick="event.stopPropagation()">
+            <div id="overlayHeader" class="overlay-header">
+                <button id="closeBtn" class="close-btn">✕</button>
+                <div class="overlay-circle"></div>
+                <span id="overlayIdBg" class="overlay-id-label"></span>
+                <img id="overlayImage" class="overlay-image" src="" alt="">
+            </div>
+
+            <div class="overlay-body">
+                <div class="overlay-info-card">
+                    <div class="overlay-name-row">
+                        <h2 id="overlayName"></h2>
+                        <div id="overlayTypes" class="overlay-types"></div>
+                    </div>
+
+                    <div class="overlay-metrics">
+                        <div class="metric">
+                            <span class="metric-label">HEIGHT</span>
+                            <span id="overlayHeight" class="metric-value"></span>
+                        </div>
+                        <div class="metric-divider"></div>
+                        <div class="metric">
+                            <span class="metric-label">WEIGHT</span>
+                            <span id="overlayWeight" class="metric-value"></span>
+                        </div>
+                        <div class="metric-divider"></div>
+                        <div class="metric">
+                            <span class="metric-label">BASE XP</span>
+                            <span id="overlayBaseXp" class="metric-value"></span>
+                        </div>
+                    </div>
+
+                    <h4 class="stats-title">BASE STATS</h4>
+                    <div id="statsContainer" class="stats-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
