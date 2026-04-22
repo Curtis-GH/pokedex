@@ -85,7 +85,7 @@ async function fetchPokemonDetails(url) {
 async function loadPokemonBatch() {
     try {
         let list = await fetchPokemonList();
-        let detailPromises = list.map(function(pokemon) {
+        let detailPromises = list.map(function (pokemon) {
             return fetchPokemonDetails(pokemon.url);
         });
         let details = await Promise.all(detailPromises);
@@ -395,7 +395,7 @@ function clearSearch() {
 
 
 
-loadMoreBtn.addEventListener('click', async function() {
+loadMoreBtn.addEventListener('click', async function () {
     showLoading();
     let newPokemon = await loadPokemonBatch();
     renderPokemonCards(newPokemon, true);
@@ -406,7 +406,7 @@ loadMoreBtn.addEventListener('click', async function() {
 searchInput.addEventListener('input', validateSearchInput);
 
 
-searchInput.addEventListener('keydown', function(event) {
+searchInput.addEventListener('keydown', function (event) {
     if (event.key === 'Enter' && searchInput.value.trim().length >= 3) {
         searchPokemon();
     }
@@ -421,19 +421,19 @@ clearBtn.addEventListener('click', clearSearch);
 overlay.addEventListener('click', closeOverlay);
 
 
-closeBtn.addEventListener('click', function(event) {
+closeBtn.addEventListener('click', function (event) {
     event.stopPropagation();
     closeOverlay();
 });
 
 
-prevBtn.addEventListener('click', function(event) {
+prevBtn.addEventListener('click', function (event) {
     event.stopPropagation();
     goToPrevPokemon();
 });
 
 
-nextBtn.addEventListener('click', function(event) {
+nextBtn.addEventListener('click', function (event) {
     event.stopPropagation();
     goToNextPokemon();
 });

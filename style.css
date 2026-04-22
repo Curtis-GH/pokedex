@@ -1,6 +1,4 @@
-/* ============================================
-   GENERAL RESET & BASE
-   ============================================ */
+
 
 * {
     margin: 0;
@@ -21,9 +19,6 @@ body {
 }
 
 
-/* ============================================
-   HEADER
-   ============================================ */
 
 .header {
     background: rgba(15, 20, 32, 0.85);
@@ -56,15 +51,13 @@ body {
     height: 36px;
     border-radius: 50%;
     border: 3px solid #EE8130;
-    background: radial-gradient(
-        circle at 40% 40%,
-        #fff 30%,
-        #EE8130 31%,
-        #EE8130 48%,
-        #1a1f35 49%,
-        #1a1f35 52%,
-        #fff 53%
-    );
+    background: radial-gradient(circle at 40% 40%,
+            #fff 30%,
+            #EE8130 31%,
+            #EE8130 48%,
+            #1a1f35 49%,
+            #1a1f35 52%,
+            #fff 53%);
 }
 
 .logo-area h1 {
@@ -144,9 +137,6 @@ body {
 }
 
 
-/* ============================================
-   MAIN CONTENT
-   ============================================ */
 
 .main-content {
     max-width: 1440px;
@@ -155,9 +145,7 @@ body {
 }
 
 
-/* ============================================
-   SEARCH ERROR
-   ============================================ */
+
 
 .search-error {
     text-align: center;
@@ -180,9 +168,7 @@ body {
 }
 
 
-/* ============================================
-   POKEMON GRID & CARDS
-   ============================================ */
+
 
 .pokemon-grid {
     display: grid;
@@ -268,9 +254,6 @@ body {
 }
 
 
-/* ============================================
-   LOADING SPINNER
-   ============================================ */
 
 .loading-spinner {
     display: flex;
@@ -290,7 +273,9 @@ body {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .loading-spinner span {
@@ -300,9 +285,6 @@ body {
 }
 
 
-/* ============================================
-   LOAD MORE BUTTON
-   ============================================ */
 
 .load-more-area {
     text-align: center;
@@ -338,9 +320,7 @@ body {
 }
 
 
-/* ============================================
-   OVERLAY
-   ============================================ */
+
 
 .overlay {
     position: fixed;
@@ -356,13 +336,25 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px) scale(0.96); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .overlay-card {
@@ -468,9 +460,7 @@ body {
 }
 
 
-/* ============================================
-   OVERLAY BODY
-   ============================================ */
+
 
 .overlay-body {
     padding: 20px 24px 24px;
@@ -546,9 +536,7 @@ body {
 }
 
 
-/* ============================================
-   STATS
-   ============================================ */
+
 
 .stats-title {
     margin: 0 0 10px;
@@ -599,9 +587,6 @@ body {
 }
 
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
 
 @media (max-width: 768px) {
     .header-content {
