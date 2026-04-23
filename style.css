@@ -1,5 +1,3 @@
-
-
 * {
     margin: 0;
     padding: 0;
@@ -11,14 +9,12 @@ body {
     background: linear-gradient(180deg, #0f1420 0%, #1a1f35 100%);
     font-family: 'Outfit', sans-serif;
     color: #fff;
-    
+    overflow-x: hidden;
 }
 
 .d-none {
     display: none !important;
 }
-
-
 
 .header {
     background: rgba(15, 20, 32, 0.85);
@@ -51,13 +47,15 @@ body {
     height: 36px;
     border-radius: 50%;
     border: 3px solid #EE8130;
-    background: radial-gradient(circle at 40% 40%,
-            #fff 30%,
-            #EE8130 31%,
-            #EE8130 48%,
-            #1a1f35 49%,
-            #1a1f35 52%,
-            #fff 53%);
+    background: radial-gradient(
+        circle at 40% 40%,
+        #fff 30%,
+        #EE8130 31%,
+        #EE8130 48%,
+        #1a1f35 49%,
+        #1a1f35 52%,
+        #fff 53%
+    );
 }
 
 .logo-area h1 {
@@ -81,7 +79,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.06);
     color: #fff;
-    font-size: 14px;
+    font-size: 16px;
     font-family: 'Outfit', sans-serif;
     outline: none;
     transition: border-color 0.2s;
@@ -92,7 +90,7 @@ body {
 }
 
 .search-area input::placeholder {
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.45);
 }
 
 #searchBtn {
@@ -102,7 +100,7 @@ body {
     background: rgba(255, 255, 255, 0.08);
     color: #fff;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 16px;
     font-family: 'Outfit', sans-serif;
     cursor: not-allowed;
     opacity: 0.4;
@@ -125,7 +123,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.15);
     background: transparent;
     color: #fff;
-    font-size: 13px;
+    font-size: 16px;
     font-family: 'Outfit', sans-serif;
     font-weight: 600;
     cursor: pointer;
@@ -136,16 +134,11 @@ body {
     background: rgba(255, 255, 255, 0.08);
 }
 
-
-
 .main-content {
     max-width: 1440px;
     margin: 0 auto;
     padding: 24px 20px 40px;
 }
-
-
-
 
 .search-error {
     text-align: center;
@@ -166,9 +159,6 @@ body {
     font-weight: 600;
     margin-top: 8px;
 }
-
-
-
 
 .pokemon-grid {
     display: grid;
@@ -193,9 +183,9 @@ body {
 .pokemon-card-id {
     display: block;
     text-align: center;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 900;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.8);
     font-family: 'JetBrains Mono', monospace;
     line-height: 1;
     margin-bottom: 4px;
@@ -235,8 +225,8 @@ body {
     background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(4px);
     border-radius: 99px;
-    padding: 3px 10px;
-    font-size: 11px;
+    padding: 4px 12px;
+    font-size: 16px;
     font-weight: 600;
     color: #fff;
     text-transform: capitalize;
@@ -252,8 +242,6 @@ body {
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.08);
 }
-
-
 
 .loading-spinner {
     display: flex;
@@ -273,18 +261,14 @@ body {
 }
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    to { transform: rotate(360deg); }
 }
 
 .loading-spinner span {
-    font-size: 14px;
-    color: #8892a4;
+    font-size: 16px;
+    color: #a0aec0;
     font-weight: 600;
 }
-
-
 
 .load-more-area {
     text-align: center;
@@ -297,7 +281,7 @@ body {
     border: none;
     background: linear-gradient(135deg, #EE8130, #F7D02C);
     color: #1a1f35;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 800;
     font-family: 'Outfit', sans-serif;
     cursor: pointer;
@@ -313,18 +297,18 @@ body {
 
 .load-more-btn:disabled {
     background: rgba(255, 255, 255, 0.08);
-    color: #8892a4;
+    color: #a0aec0;
     box-shadow: none;
     cursor: not-allowed;
     transform: none;
 }
 
-
-
-
 .overlay {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: rgba(15, 20, 30, 0.7);
     backdrop-filter: blur(8px);
     display: flex;
@@ -333,28 +317,23 @@ body {
     z-index: 1000;
     padding: 16px;
     animation: fadeIn 0.25s ease;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.overlay::-webkit-scrollbar {
+    display: none;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 @keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.96);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    from { opacity: 0; transform: translateY(30px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .overlay-card {
@@ -362,8 +341,7 @@ body {
     border-radius: 24px;
     max-width: 420px;
     width: 100%;
-    max-height: 90vh;
-    overflow: auto;
+    margin: auto;
     position: relative;
     animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
@@ -401,7 +379,7 @@ body {
     text-align: center;
     font-size: 18px;
     font-weight: 900;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.8);
     font-family: 'JetBrains Mono', monospace;
     position: relative;
     z-index: 1;
@@ -431,8 +409,8 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     color: #fff;
     width: 44px;
     height: 44px;
@@ -448,19 +426,16 @@ body {
 }
 
 .nav-arrow:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.7);
 }
 
 .nav-arrow-left {
-    left: max(12px, calc(50% - 250px));
+    left: 12px;
 }
 
 .nav-arrow-right {
-    right: max(12px, calc(50% - 250px));
+    right: 12px;
 }
-
-
-
 
 .overlay-body {
     padding: 20px 24px 24px;
@@ -498,8 +473,8 @@ body {
 
 .overlay-type-badge {
     border-radius: 99px;
-    padding: 3px 10px;
-    font-size: 11px;
+    padding: 4px 12px;
+    font-size: 16px;
     font-weight: 600;
     color: #fff;
     text-transform: capitalize;
@@ -518,16 +493,16 @@ body {
 
 .metric-label {
     display: block;
-    font-size: 11px;
-    color: #8892a4;
+    font-size: 16px;
+    color: #5a6578;
     font-weight: 600;
     margin-bottom: 2px;
 }
 
 .metric-value {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
-    color: #2d3748;
+    color: #1a202c;
 }
 
 .metric-divider {
@@ -535,14 +510,11 @@ body {
     background: #e8ecf1;
 }
 
-
-
-
 .stats-title {
     margin: 0 0 10px;
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 700;
-    color: #4a5568;
+    color: #2d3748;
     letter-spacing: 1px;
     font-family: 'JetBrains Mono', monospace;
 }
@@ -556,20 +528,20 @@ body {
 
 .stat-label {
     width: 56px;
-    font-size: 11px;
+    font-size: 16px;
     font-weight: 700;
-    color: #8892a4;
+    color: #5a6578;
     letter-spacing: 1px;
     font-family: 'JetBrains Mono', monospace;
 }
 
 .stat-value {
     width: 32px;
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 700;
     text-align: right;
     font-family: 'JetBrains Mono', monospace;
-    color: #2d3748;
+    color: #1a202c;
 }
 
 .stat-bar-bg {
@@ -585,8 +557,6 @@ body {
     border-radius: 99px;
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-
 
 @media (max-width: 768px) {
     .header-content {
@@ -635,21 +605,16 @@ body {
         padding: 12px 12px 10px;
     }
 
-    .pokemon-card-id {
-        font-size: 12px;
-    }
-
-    .pokemon-card-name {
-        font-size: 14px;
-    }
-
     .overlay-card {
         max-width: 100%;
-        max-height: 95vh;
     }
 
     .overlay-metrics {
         gap: 12px;
+    }
+
+    .stat-label {
+        width: 50px;
     }
 }
 
@@ -690,22 +655,8 @@ body {
         padding: 10px 10px 8px;
     }
 
-    .pokemon-card-id {
-        font-size: 11px;
-    }
-
-    .pokemon-card-name {
-        font-size: 13px;
-    }
-
-    .type-badge {
-        font-size: 10px;
-        padding: 2px 8px;
-    }
-
     .load-more-btn {
         padding: 12px 24px;
-        font-size: 13px;
     }
 
     .overlay {
@@ -714,17 +665,12 @@ body {
 
     .overlay-card {
         max-width: 100%;
-        max-height: 95vh;
         border-radius: 16px;
     }
 
     .overlay-header {
         padding: 16px 16px 50px;
         border-radius: 16px 16px 0 0;
-    }
-
-    .overlay-id-label {
-        font-size: 15px;
     }
 
     .overlay-body {
@@ -749,24 +695,6 @@ body {
         gap: 8px;
     }
 
-    .metric-label {
-        font-size: 10px;
-    }
-
-    .metric-value {
-        font-size: 13px;
-    }
-
-    .stat-label {
-        width: 44px;
-        font-size: 10px;
-    }
-
-    .stat-value {
-        width: 26px;
-        font-size: 11px;
-    }
-
     .nav-arrow {
         width: 36px;
         height: 36px;
@@ -784,7 +712,6 @@ body {
     .close-btn {
         width: 28px;
         height: 28px;
-        font-size: 14px;
     }
 
     .logo-area h1 {
@@ -800,11 +727,7 @@ body {
         padding: 20px 12px;
     }
 
-    .search-error-icon {
-        font-size: 28px;
-    }
-
-    .search-error p {
-        font-size: 14px;
+    .stat-label {
+        width: 44px;
     }
 }

@@ -1,12 +1,10 @@
-
-
 const BASE_URL = 'https://pokeapi.co/api/v2/pokemon';
 const BATCH_SIZE = 20;
 let offset = 0;
 let allPokemon = [];
+let displayedPokemon = [];
 let cache = {};
 let currentOverlayIndex = null;
-
 
 
 const TYPE_COLORS = {
@@ -17,6 +15,7 @@ const TYPE_COLORS = {
     rock: '#B6A136', ghost: '#735797', dragon: '#6F35FC',
     dark: '#705746', steel: '#B7B7CE', fairy: '#D685AD'
 };
+
 
 const TYPE_GRADIENTS = {
     normal: 'linear-gradient(135deg, #A8A77A, #C6C6A7)',
@@ -39,12 +38,11 @@ const TYPE_GRADIENTS = {
     fairy: 'linear-gradient(135deg, #D685AD, #E8A5C5)'
 };
 
+
 const STAT_NAMES = {
     'hp': 'HP', 'attack': 'ATK', 'defense': 'DEF',
     'special-attack': 'SP.ATK', 'special-defense': 'SP.DEF', 'speed': 'SPD'
 };
-
-
 
 
 let pokemonContainer = document.getElementById('pokemonContainer');
@@ -59,7 +57,6 @@ let overlay = document.getElementById('overlay');
 let prevBtn = document.getElementById('prevBtn');
 let nextBtn = document.getElementById('nextBtn');
 let closeBtn = document.getElementById('closeBtn');
-
 
 
 async function fetchPokemonList() {
@@ -81,11 +78,10 @@ async function fetchPokemonDetails(url) {
 }
 
 
-// w3schools.com/js/js_promise.asp (Promise.all)
 async function loadPokemonBatch() {
     try {
         let list = await fetchPokemonList();
-        let detailPromises = list.map(function (pokemon) {
+        let detailPromises = list.map(function(pokemon) {
             return fetchPokemonDetails(pokemon.url);
         });
         let details = await Promise.all(detailPromises);
@@ -99,49 +95,11 @@ async function loadPokemonBatch() {
 }
 
 
-
-
-function getTypeBadgesHtml(types) {
-    let html = '';
-    for (let i = 0; i < types.length; i++) {
-        html += `<span class="type-badge">${types[i].type.name}</span>`;
-    }
-    return html;
-}
-
-
-function getPokemonImage(pokemon) {
-    return pokemon.sprites.other['official-artwork'].front_default
-        || pokemon.sprites.front_default;
-}
-
-
-function getPokemonCardHtml(pokemon, index) {
-    let mainType = pokemon.types[0].type.name;
-    let idText = '#' + String(pokemon.id).padStart(3, '0');
-    let image = getPokemonImage(pokemon);
-    return `
-        <div class="pokemon-card" 
-             style="background: ${TYPE_GRADIENTS[mainType]}; 
-                    box-shadow: 0 4px 15px ${TYPE_COLORS[mainType]}44"
-             onclick="openOverlay(${index})">
-            <div class="pokemon-card-inner">
-                <span class="pokemon-card-id">${idText}</span>
-                <img class="pokemon-card-img" src="${image}" alt="${pokemon.name}" loading="lazy">
-                <h3 class="pokemon-card-name">${pokemon.name.toUpperCase()}</h3>
-                <div class="pokemon-card-types">${getTypeBadgesHtml(pokemon.types)}</div>
-            </div>
-            <div class="pokemon-card-circle"></div>
-        </div>`;
-}
-
-
-
 function renderPokemonCards(pokemonList, append) {
     let html = '';
-    let startIndex = allPokemon.length - pokemonList.length;
     for (let i = 0; i < pokemonList.length; i++) {
-        html += getPokemonCardHtml(pokemonList[i], startIndex + i);
+        let index = findIndexById(pokemonList[i].id);
+        html += getPokemonCardHtml(pokemonList[i], index);
     }
     if (append) {
         pokemonContainer.innerHTML += html;
@@ -152,50 +110,42 @@ function renderPokemonCards(pokemonList, append) {
 
 
 function renderAllCards() {
-    let html = '';
-    for (let i = 0; i < allPokemon.length; i++) {
-        html += getPokemonCardHtml(allPokemon[i], i);
-    }
-    pokemonContainer.innerHTML = html;
-}
-
-
-
-function getStatBarHtml(statName, value) {
-    let label = STAT_NAMES[statName] || statName.toUpperCase();
-    let percent = Math.round((value / 255) * 100);
-    let hue = Math.round((value / 255) * 120);
-    return `
-        <div class="stat-row">
-            <span class="stat-label">${label}</span>
-            <span class="stat-value">${value}</span>
-            <div class="stat-bar-bg">
-                <div class="stat-bar-fill" 
-                     style="width: ${percent}%; background: hsl(${hue}, 70%, 55%)">
-                </div>
-            </div>
-        </div>`;
+    displayedPokemon = allPokemon;
+    renderPokemonCards(allPokemon, false);
 }
 
 
 function openOverlay(index) {
-    currentOverlayIndex = index;
+    currentOverlayIndex = findDisplayedIndex(index);
     updateOverlayContent();
     overlay.classList.remove('d-none');
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     updateNavArrows();
+}
+
+
+function findDisplayedIndex(globalIndex) {
+    let pokemon = allPokemon[globalIndex];
+    for (let i = 0; i < displayedPokemon.length; i++) {
+        if (displayedPokemon[i].id === pokemon.id) {
+            return i;
+        }
+    }
+    return 0;
 }
 
 
 function closeOverlay() {
     overlay.classList.add('d-none');
     document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
     currentOverlayIndex = null;
 }
 
 
 function updateOverlayContent() {
-    let pokemon = allPokemon[currentOverlayIndex];
+    let pokemon = displayedPokemon[currentOverlayIndex];
     let mainType = pokemon.types[0].type.name;
     updateOverlayHeader(pokemon, mainType);
     renderOverlayTypes(pokemon.types);
@@ -205,10 +155,9 @@ function updateOverlayContent() {
 
 
 function updateOverlayHeader(pokemon, mainType) {
-    let idText = '#' + String(pokemon.id).padStart(3, '0');
     let image = getPokemonImage(pokemon);
     document.getElementById('overlayHeader').style.background = TYPE_GRADIENTS[mainType];
-    document.getElementById('overlayIdBg').textContent = idText;
+    document.getElementById('overlayIdBg').textContent = getIdText(pokemon.id);
     document.getElementById('overlayImage').src = image;
     document.getElementById('overlayImage').alt = pokemon.name;
     document.getElementById('overlayName').textContent = pokemon.name.toUpperCase();
@@ -216,14 +165,7 @@ function updateOverlayHeader(pokemon, mainType) {
 
 
 function renderOverlayTypes(types) {
-    let html = '';
-    for (let i = 0; i < types.length; i++) {
-        let color = TYPE_COLORS[types[i].type.name];
-        html += `<span class="overlay-type-badge" style="background: ${color}">
-                    ${types[i].type.name}
-                 </span>`;
-    }
-    document.getElementById('overlayTypes').innerHTML = html;
+    document.getElementById('overlayTypes').innerHTML = getOverlayTypeBadgeHtml(types);
 }
 
 
@@ -247,50 +189,30 @@ function renderOverlayStats(stats) {
 
 
 function updateNavArrows() {
-    if (currentOverlayIndex <= 0) {
-        prevBtn.style.display = 'none';
-    } else {
-        prevBtn.style.display = 'flex';
-    }
-    if (currentOverlayIndex >= allPokemon.length - 1) {
-        nextBtn.style.display = 'none';
-    } else {
-        nextBtn.style.display = 'flex';
-    }
+    prevBtn.style.display = (currentOverlayIndex <= 0) ? 'none' : 'flex';
+    nextBtn.style.display = (currentOverlayIndex >= displayedPokemon.length - 1) ? 'none' : 'flex';
 }
 
 
-function goToPrevPokemon() {
-    if (currentOverlayIndex > 0) {
-        currentOverlayIndex = currentOverlayIndex - 1;
+function navigateOverlay(direction) {
+    let newIndex = currentOverlayIndex + direction;
+    if (newIndex >= 0 && newIndex < displayedPokemon.length) {
+        currentOverlayIndex = newIndex;
         updateOverlayContent();
         updateNavArrows();
     }
 }
 
 
-function goToNextPokemon() {
-    if (currentOverlayIndex < allPokemon.length - 1) {
-        currentOverlayIndex = currentOverlayIndex + 1;
-        updateOverlayContent();
-        updateNavArrows();
+function toggleLoading(show) {
+    if (show) {
+        loadingSpinner.classList.remove('d-none');
+        loadMoreBtn.disabled = true;
+    } else {
+        loadingSpinner.classList.add('d-none');
+        loadMoreBtn.disabled = false;
     }
 }
-
-
-
-function showLoading() {
-    loadingSpinner.classList.remove('d-none');
-    loadMoreBtn.disabled = true;
-}
-
-
-function hideLoading() {
-    loadingSpinner.classList.add('d-none');
-    loadMoreBtn.disabled = false;
-}
-
-
 
 
 function validateSearchInput() {
@@ -308,28 +230,27 @@ function validateSearchInput() {
 async function searchPokemon() {
     let term = searchInput.value.trim().toLowerCase();
     if (term.length < 3) return;
-
     hideSearchError();
-    showLoading();
-
-    let found = findInCache(term);
-    if (found) {
-        showSearchResult(found);
-        hideLoading();
+    toggleLoading(true);
+    let results = findAllInCache(term);
+    if (results.length > 0) {
+        showSearchResults(results);
+        toggleLoading(false);
         return;
     }
     await searchFromApi(term);
-    hideLoading();
+    toggleLoading(false);
 }
 
 
-function findInCache(term) {
+function findAllInCache(term) {
+    let results = [];
     for (let i = 0; i < allPokemon.length; i++) {
         if (allPokemon[i].name.includes(term)) {
-            return allPokemon[i];
+            results.push(allPokemon[i]);
         }
     }
-    return null;
+    return results;
 }
 
 
@@ -342,22 +263,28 @@ async function searchFromApi(term) {
         }
         let data = await response.json();
         cache[data.url] = data;
-        showSearchResult(data);
+        showSearchResults([data]);
     } catch (error) {
         showSearchError(term);
     }
 }
 
 
-function showSearchResult(pokemon) {
-    let index = findIndexById(pokemon.id);
-    if (index < 0) {
-        allPokemon.push(pokemon);
-        index = allPokemon.length - 1;
-    }
-    pokemonContainer.innerHTML = getPokemonCardHtml(pokemon, index);
+function showSearchResults(pokemonList) {
+    displayedPokemon = pokemonList;
+    addMissingToAll(pokemonList);
+    renderPokemonCards(pokemonList, false);
     loadMoreBtn.style.display = 'none';
     clearBtn.classList.remove('d-none');
+}
+
+
+function addMissingToAll(pokemonList) {
+    for (let i = 0; i < pokemonList.length; i++) {
+        if (findIndexById(pokemonList[i].id) < 0) {
+            allPokemon.push(pokemonList[i]);
+        }
+    }
 }
 
 
@@ -393,58 +320,58 @@ function clearSearch() {
 }
 
 
+function initEventListeners() {
+    loadMoreBtn.addEventListener('click', handleLoadMore);
+    searchInput.addEventListener('input', validateSearchInput);
+    searchInput.addEventListener('keydown', handleSearchKeydown);
+    searchBtn.addEventListener('click', searchPokemon);
+    clearBtn.addEventListener('click', clearSearch);
+    overlay.addEventListener('click', closeOverlay);
+    closeBtn.addEventListener('click', handleStopAndClose);
+    prevBtn.addEventListener('click', handlePrevClick);
+    nextBtn.addEventListener('click', handleNextClick);
+}
 
 
-loadMoreBtn.addEventListener('click', async function () {
-    showLoading();
+async function handleLoadMore() {
+    toggleLoading(true);
     let newPokemon = await loadPokemonBatch();
+    displayedPokemon = allPokemon;
     renderPokemonCards(newPokemon, true);
-    hideLoading();
-});
+    toggleLoading(false);
+}
 
 
-searchInput.addEventListener('input', validateSearchInput);
-
-
-searchInput.addEventListener('keydown', function (event) {
+function handleSearchKeydown(event) {
     if (event.key === 'Enter' && searchInput.value.trim().length >= 3) {
         searchPokemon();
     }
-});
+}
 
 
-searchBtn.addEventListener('click', searchPokemon);
-
-clearBtn.addEventListener('click', clearSearch);
-
-
-overlay.addEventListener('click', closeOverlay);
-
-
-closeBtn.addEventListener('click', function (event) {
+function handleStopAndClose(event) {
     event.stopPropagation();
     closeOverlay();
-});
+}
 
 
-prevBtn.addEventListener('click', function (event) {
+function handlePrevClick(event) {
     event.stopPropagation();
-    goToPrevPokemon();
-});
+    navigateOverlay(-1);
+}
 
 
-nextBtn.addEventListener('click', function (event) {
+function handleNextClick(event) {
     event.stopPropagation();
-    goToNextPokemon();
-});
-
+    navigateOverlay(1);
+}
 
 
 async function init() {
-    showLoading();
+    initEventListeners();
+    toggleLoading(true);
     let firstBatch = await loadPokemonBatch();
+    displayedPokemon = allPokemon;
     renderPokemonCards(firstBatch, false);
-    hideLoading();
+    toggleLoading(false);
 }
-
-init();
