@@ -53,7 +53,7 @@ let searchBtn = document.getElementById('searchBtn');
 let clearBtn = document.getElementById('clearBtn');
 let searchError = document.getElementById('searchError');
 let searchErrorText = document.getElementById('searchErrorText');
-let overlay = document.getElementById('overlay');
+let pokemonDialog = document.getElementById('pokemonDialog');
 let prevBtn = document.getElementById('prevBtn');
 let nextBtn = document.getElementById('nextBtn');
 let closeBtn = document.getElementById('closeBtn');
@@ -81,7 +81,7 @@ async function fetchPokemonDetails(url) {
 async function loadPokemonBatch() {
     try {
         let list = await fetchPokemonList();
-        let detailPromises = list.map(function(pokemon) {
+        let detailPromises = list.map(function (pokemon) {
             return fetchPokemonDetails(pokemon.url);
         });
         let details = await Promise.all(detailPromises);
@@ -95,11 +95,40 @@ async function loadPokemonBatch() {
 }
 
 
+function getPokemonImage(pokemon) {
+    return pokemon.sprites.other['official-artwork'].front_default
+        || pokemon.sprites.front_default;
+}
+
+
+function getIdText(id) {
+    return '#' + String(id).padStart(3, '0');
+}
+
+
+function buildTypeBadges(types) {
+    let html = '';
+    for (let i = 0; i < types.length; i++) {
+        html += getTypeBadgeHtml(types[i].type.name);
+    }
+    return html;
+}
+
+
+function buildCardHtml(pokemon, index) {
+    let mainType = pokemon.types[0].type.name;
+    let idText = getIdText(pokemon.id);
+    let image = getPokemonImage(pokemon);
+    let typeBadges = buildTypeBadges(pokemon.types);
+    return getPokemonCardHtml(pokemon, index, mainType, idText, image, typeBadges);
+}
+
+
 function renderPokemonCards(pokemonList, append) {
     let html = '';
     for (let i = 0; i < pokemonList.length; i++) {
         let index = findIndexById(pokemonList[i].id);
-        html += getPokemonCardHtml(pokemonList[i], index);
+        html += buildCardHtml(pokemonList[i], index);
     }
     if (append) {
         pokemonContainer.innerHTML += html;
@@ -118,9 +147,7 @@ function renderAllCards() {
 function openOverlay(index) {
     currentOverlayIndex = findDisplayedIndex(index);
     updateOverlayContent();
-    overlay.classList.remove('d-none');
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
+    pokemonDialog.showModal();
     updateNavArrows();
 }
 
@@ -137,9 +164,7 @@ function findDisplayedIndex(globalIndex) {
 
 
 function closeOverlay() {
-    overlay.classList.add('d-none');
-    document.body.style.overflow = '';
-    document.documentElement.style.overflow = '';
+    pokemonDialog.close();
     currentOverlayIndex = null;
 }
 
@@ -165,7 +190,12 @@ function updateOverlayHeader(pokemon, mainType) {
 
 
 function renderOverlayTypes(types) {
-    document.getElementById('overlayTypes').innerHTML = getOverlayTypeBadgeHtml(types);
+    let html = '';
+    for (let i = 0; i < types.length; i++) {
+        let color = TYPE_COLORS[types[i].type.name];
+        html += getOverlayTypeBadgeHtml(types[i].type.name, color);
+    }
+    document.getElementById('overlayTypes').innerHTML = html;
 }
 
 
@@ -182,7 +212,12 @@ function renderOverlayMetrics(pokemon) {
 function renderOverlayStats(stats) {
     let html = '';
     for (let i = 0; i < stats.length; i++) {
-        html += getStatBarHtml(stats[i].stat.name, stats[i].base_stat);
+        let statName = stats[i].stat.name;
+        let value = stats[i].base_stat;
+        let label = STAT_NAMES[statName] || statName.toUpperCase();
+        let percent = Math.round((value / 255) * 100);
+        let hue = Math.round((value / 255) * 120);
+        html += getStatBarHtml(label, value, percent, hue);
     }
     document.getElementById('statsContainer').innerHTML = html;
 }
@@ -326,8 +361,8 @@ function initEventListeners() {
     searchInput.addEventListener('keydown', handleSearchKeydown);
     searchBtn.addEventListener('click', searchPokemon);
     clearBtn.addEventListener('click', clearSearch);
-    overlay.addEventListener('click', closeOverlay);
-    closeBtn.addEventListener('click', handleStopAndClose);
+    pokemonDialog.addEventListener('click', handleDialogClick);
+    closeBtn.addEventListener('click', closeOverlay);
     prevBtn.addEventListener('click', handlePrevClick);
     nextBtn.addEventListener('click', handleNextClick);
 }
@@ -349,20 +384,19 @@ function handleSearchKeydown(event) {
 }
 
 
-function handleStopAndClose(event) {
-    event.stopPropagation();
-    closeOverlay();
+function handleDialogClick(event) {
+    if (event.target === pokemonDialog) {
+        closeOverlay();
+    }
 }
 
 
-function handlePrevClick(event) {
-    event.stopPropagation();
+function handlePrevClick() {
     navigateOverlay(-1);
 }
 
 
-function handleNextClick(event) {
-    event.stopPropagation();
+function handleNextClick() {
     navigateOverlay(1);
 }
 
